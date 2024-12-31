@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3003';
+const API_BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:3003';
 
 // 添加通用请求配置
 export const fetchConfig = {
