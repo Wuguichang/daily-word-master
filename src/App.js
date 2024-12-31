@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
+import { WordProvider } from './context/WordContext';
 import Sidebar from './components/Sidebar/Sidebar';
 import AppRoutes from './routes';
 import { useUser } from './context/UserContext';
 import './App.css';
-import { WordProvider } from './context/WordContext';
 
 const AppContent = () => {
   const { user } = useUser();
