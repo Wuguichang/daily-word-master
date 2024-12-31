@@ -6,20 +6,19 @@ import ProgressStats from '../../components/ProgressStats/ProgressStats';
 import CategorySelector from '../../components/CategorySelector/CategorySelector';
 
 const Learn = () => {
-  const [viewMode, setViewMode] = useState('daily');
+  const [viewMode, setViewMode] = useState('daily'); // 'daily' 或 'category'
   const [selectedCategory, setSelectedCategory] = useState('essential');
   const [showMeaning, setShowMeaning] = useState({});
   const [dailyWords, setDailyWords] = useState(null);
   const [learningProgress, setLearningProgress] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [currentPage, setCurrentPage] = useState(0);
-  
-  const TOTAL_WORDS = 30;
-  const WORDS_PER_PAGE = 3;
-  const TOTAL_PAGES = Math.ceil(TOTAL_WORDS / WORDS_PER_PAGE);
-  
+  const TOTAL_WORDS = 30; // 每天的单词总数
+  const WORDS_PER_PAGE = 3; // 每页显示的单词数
+  const TOTAL_PAGES = Math.ceil(TOTAL_WORDS / WORDS_PER_PAGE); // 总页数
   const { user } = useUser();
 
+  // 获取指定日期的单词和进度
   const loadDailyWords = useCallback((date) => {
     try {
       const savedDailyWords = localStorage.getItem(`dailyWords_${date}`);
@@ -46,24 +45,28 @@ const Learn = () => {
     }
   }, [selectedDate, user, loadDailyWords]);
 
+  // 处理模式切换
   const handleModeChange = (mode) => {
     setViewMode(mode);
-    setShowMeaning({});
+    setShowMeaning({}); // 清空显示状态
     if (mode === 'daily') {
       loadDailyWords(selectedDate);
     }
   };
 
+  // 处理分类切换
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
-    setShowMeaning({});
+    setShowMeaning({}); // 清空显示状态
   };
 
+  // 处理日期切换
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    setShowMeaning({});
+    setShowMeaning({}); // 清空显示状态
   };
 
+  // 获取可选择的日期范围（今天和前6天）
   const getDateOptions = () => {
     const dates = [];
     for (let i = 0; i < 7; i++) {
@@ -74,24 +77,28 @@ const Learn = () => {
     return dates;
   };
 
+  // 处理单词状态更新
   const markWordStatus = (wordId, status) => {
     const newProgress = {
       ...learningProgress,
       [wordId]: status === learningProgress[wordId] ? null : status
     };
     setLearningProgress(newProgress);
+    
     localStorage.setItem(
       `wordProgress_${user.username}_${selectedDate}`,
       JSON.stringify(newProgress)
     );
   };
 
+  // 计算学习统计
   const stats = {
     total: TOTAL_WORDS,
     learned: Object.values(learningProgress).filter(s => s === 'learned').length,
     mastered: Object.values(learningProgress).filter(s => s === 'mastered').length
   };
 
+  // 添加处理显示/隐藏释义的函数
   const handleToggleMeaning = (wordId) => {
     setShowMeaning(prev => ({
       ...prev,
@@ -99,6 +106,7 @@ const Learn = () => {
     }));
   };
 
+  // 添加播放音频的函数
   const playAudio = async (word) => {
     try {
       const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=1`);
@@ -112,13 +120,15 @@ const Learn = () => {
     }
   };
 
+  // 获取当前页的单词
   const getCurrentPageWords = () => {
-    if (!dailyWords?.words) return [];
+    if (!dailyWords || !dailyWords.words) return [];
     const startIndex = currentPage * WORDS_PER_PAGE;
     const endIndex = startIndex + WORDS_PER_PAGE;
     return dailyWords.words.slice(startIndex, endIndex);
   };
 
+  // 处理页面切换
   const handlePrevPage = useCallback(() => {
     if (currentPage > 0) {
       setCurrentPage(prev => prev - 1);
@@ -127,14 +137,14 @@ const Learn = () => {
   }, [currentPage]);
 
   const handleNextPage = useCallback(() => {
-    if (!dailyWords?.words) return;
-    const maxPage = Math.ceil(dailyWords.words.length / WORDS_PER_PAGE) - 1;
+    const maxPage = Math.ceil(dailyWords?.words.length / WORDS_PER_PAGE) - 1;
     if (currentPage < maxPage) {
       setCurrentPage(prev => prev + 1);
       setShowMeaning({});
     }
-  }, [currentPage, dailyWords?.words]);
+  }, [currentPage, dailyWords?.words.length, WORDS_PER_PAGE]);
 
+  // 添加键盘快捷键支持
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === 'ArrowLeft') {
