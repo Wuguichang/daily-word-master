@@ -150,28 +150,27 @@ const Learn = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* 学习模式选择 */}
       <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">学习模式</h2>
           <div className="flex gap-4">
             <button
               onClick={() => handleModeChange('daily')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${viewMode === 'daily'
+              className={`px-4 py-2 rounded-lg transition-all ${
+                viewMode === 'daily'
                   ? 'bg-primary-500 text-white'
-                  : 'border border-primary-500 text-primary-500 hover:bg-primary-50'
-                }`}
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
             >
-              每日单词
+              每日学习
             </button>
             <button
               onClick={() => handleModeChange('category')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${viewMode === 'category'
+              className={`px-4 py-2 rounded-lg transition-all ${
+                viewMode === 'category'
                   ? 'bg-primary-500 text-white'
-                  : 'border border-primary-500 text-primary-500 hover:bg-primary-50'
-                }`}
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
             >
               分类学习
             </button>
@@ -200,7 +199,6 @@ const Learn = () => {
         <ProgressStats stats={stats} />
       </div>
 
-      {/* 单词学习区域 */}
       {viewMode === 'daily' ? (
         dailyWords && (
           <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
@@ -215,9 +213,7 @@ const Learn = () => {
               </span>
             </div>
 
-            {/* 单词卡片区域 */}
             <div className="relative">
-              {/* 上一页按钮 */}
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
@@ -229,7 +225,6 @@ const Learn = () => {
                 </svg>
               </button>
 
-              {/* 当前页单词卡片 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto px-8">
                 {getCurrentPageWords().map((word, index) => {
                   const globalIndex = currentPage * WORDS_PER_PAGE + index;
@@ -247,7 +242,6 @@ const Learn = () => {
                 })}
               </div>
 
-              {/* 下一页按钮 */}
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === TOTAL_PAGES - 1}
@@ -260,7 +254,6 @@ const Learn = () => {
               </button>
             </div>
 
-            {/* 进度指示器 */}
             <div className="mt-8">
               <div className="flex justify-center gap-2">
                 {Array.from({ length: TOTAL_PAGES }).map((_, index) => (
@@ -284,29 +277,6 @@ const Learn = () => {
             selectedCategory={selectedCategory}
             onSelect={handleCategoryChange}
           />
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold text-gray-900">
-                {wordCategories[selectedCategory].name}
-              </h3>
-              <span className="text-sm text-gray-500">
-                共{wordCategories[selectedCategory].words.length}个单词
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wordCategories[selectedCategory].words.map((word, index) => (
-                <WordCard
-                  key={`${selectedCategory}-${index}`}
-                  word={word}
-                  status={learningProgress[`${selectedCategory}-${index}`]}
-                  isShowingMeaning={showMeaning[`${selectedCategory}-${index}`]}
-                  onToggleMeaning={() => handleToggleMeaning(`${selectedCategory}-${index}`)}
-                  onPlayAudio={playAudio}
-                  onMarkStatus={(status) => markWordStatus(`${selectedCategory}-${index}`, status)}
-                />
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
