@@ -113,7 +113,6 @@ const Learn = () => {
       await audio.play();
     } catch (error) {
       console.error('音频播放失败:', error);
-      // 使用更友好的错误提示
       const errorMessage = error.name === 'NotAllowedError' 
         ? '请先与页面交互后再播放音频'
         : '音频加载失败，请检查网络连接';
